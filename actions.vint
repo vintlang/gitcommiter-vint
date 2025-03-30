@@ -5,8 +5,8 @@ package actions {
 
     // Helper: confirmation prompt (Y/n)
     let confirmAction = func(question) {
-        let ans = prompt(question, "Y/n")
-        return ans.toLowerCase() != "n"
+        let ans = input(question+ "Y/n")
+        return ans.lower() != "n"
     }
 
     // Conventional commit workflow implementation
@@ -17,47 +17,36 @@ package actions {
         // Allowed commit types
         let allowedTypes = ["feat", "fix", "docs", "style", "refactor", "perf", "test", "chore", "revert"]
 
-        // Prompt for commit type until valid input is provided
-        let commitType = func() {
-            while (true) {
-                let t = input("🔧 Type", "feat, fix, docs, style, refactor, perf, test, chore, revert: ")
-                if (t in allowedTypes) {
-                    styled.success("✅ Valid type: " + t)
-                    return t
-                } else {
-                    styled.error("⚠️  Invalid type: " + t)
-                }
-            }
-        }()
+        // Prompt for commit type once
+        let commitType = input("🔧 Type (feat, fix, docs, style, refactor, perf, test, chore, revert): ")
+        if (!(commitType in allowedTypes)) {
+            styled.error("⚠️  Invalid type: " + commitType)
+        } else {
+            styled.success("✅ Valid type: " + commitType)
+        }
 
         // Optional scope input
-        let scope = input("🎯 Scope (optional) e.g authentication: ")
+        let scope = input("🎯 Scope (optional) e.g., authentication: ")
 
-        // Required description – re-prompt if empty
-        let description = func() {
-            while (true) {
-                let d = input("📌 Description ")
-                if (d != "") {
-                    return d
-                } else {
-                    styled.error("⚠️  This field is required")
-                }
-            }
-        }()
+        // Required description – single prompt
+        let description = input("📌 Description: ")
+        if (description == "") {
+            styled.error("⚠️  This field is required")
+        }
 
         // Optional commit body
-        let body = input("💬 Body (optional)"+ "Enter commit body (press Enter for none): ")
+        let body = input("💬 Body (optional) - Enter commit body (press Enter for none): ")
 
-        // Breaking change section (optional) using a normal if statement
+        // Breaking change section (optional)
         let isBreaking = false
         let breakingDetail = ""
         if (confirmAction("💥 Breaking change?")) {
             isBreaking = true
-            breakingDetail = input("📣 Breaking change details ")
+            breakingDetail = input("📣 Breaking change details: ")
         }
 
-        // Issue reference (optional) using a normal if statement
-        let issueInput = input("🔗 Issue number (optional)  e.g., 123")
+        // Issue reference (optional)
+        let issueInput = input("🔗 Issue number (optional) e.g., 123: ")
         let issueRef = ""
         if (issueInput != "") {
             issueRef = "Closes #" + issueInput
@@ -66,7 +55,6 @@ package actions {
         // Trailers – for now, we use an empty list (could be extended with input loops)
         let trailers = []
 
-        // Build commit header using a normal if statement
         let header = ""
         if (scope != "") {
             header = commitType + "(" + scope + "): " + description
@@ -74,7 +62,6 @@ package actions {
             header = commitType + ": " + description
         }
 
-        // Build the full commit message
         let commitMessage = header
         if (body != "") {
             commitMessage = commitMessage + "\n\n" + body
@@ -85,8 +72,8 @@ package actions {
         if (issueRef != "") {
             commitMessage = commitMessage + "\n\n" + issueRef
         }
-        if (trailers.length > 0) {
-            commitMessage = commitMessage + "\n\n" + trailers.join("\n")
+        if (trailers.length() > 0) {
+            commitMessage = commitMessage + "\n\n"
         }
 
         // Display commit preview
@@ -103,6 +90,9 @@ package actions {
 
         // Execute Git workflow
         os.run("git add .")
+        commitCmd = "git commit -m '" + commitMessage + "'"
+        styled.info("Executing: " + commitCmd)
+        styled.dim("──────────────────")
         os.run("git commit -m '" + commitMessage + "'")
         os.run("git push")
 
@@ -116,3 +106,4 @@ package actions {
         os.exit(1)
     }
 }
+// 
