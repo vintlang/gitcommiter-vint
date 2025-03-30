@@ -1,0 +1,1 @@
+# gitcommiter-vint
