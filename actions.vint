@@ -1,0 +1,9 @@
+import os
+
+package actions {
+    let defaultOutput = func(){
+        println('Invalid argument provided.')
+        println('Usage: vint <path-to-v-file>')
+        os.exit(1)
+    }
+}
