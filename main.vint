@@ -3,8 +3,22 @@ import os
 
 let args = cli.getArgs()
 args_len = args.length()
+
+let defaultOutput = func(){
+    println('Invalid argument provided.')
+    println('Usage: vint <path-to-v-file>')
+    os.exit(1)
+}
+
 if (args_len == 0) {
     println('No arguments provided.')
     println('Usage: vint <path-to-v-file>')
     os.exit(1)
+}else{
+    switch(args[0]){
+        default {
+            defaultOutput()
+        }
+    }
 }
+
