@@ -2,8 +2,8 @@ import os
 
 package actions {
     let defaultOutput = func(){
-        println('Invalid argument provided.')
-        println('Usage: vint <path-to-v-file>')
+        println('No arguments provided.')
+        println('Usage: commit')
         os.exit(1)
     }
 }

@@ -7,9 +7,19 @@ args_len = args.length()
 
 
 if (args_len == 0) {
-    println('No arguments provided.')
-    println('Usage: vint <path-to-v-file>')
-    os.exit(1)
+    actions.defaultOutput()
+} else if (args_len == 1) {
+    switch(args[0]){
+        case 'help' {
+            println('Usage: vint <path-to-v-file>')
+        }
+        case 'version' {
+            println('vint version 1.0.0')
+        }
+        default {
+            actions.defaultOutput()
+        }
+    }
 }else{
     switch(args[0]){
         default {
