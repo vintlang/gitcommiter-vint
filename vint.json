@@ -1,5 +1,5 @@
 {
   "name": "gitcommiter",
-  "version": "1.0.0",
+  "version": "1.0.0",    
   "description": "This module provides an interactive conventional commit builder for the Vint language. It streamlines the process of crafting commit messages that follow the Conventional Commits specification, using styled output for better clarity and an integrated Git workflow."
 }
