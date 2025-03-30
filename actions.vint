@@ -1,9 +1,112 @@
 import os
+import styled
 
 package actions {
+
+
+    // Helper: confirmation prompt (Y/n)
+    let confirmAction = func(question) {
+        let ans = prompt(question, "Y/n")
+        return ans.toLowerCase() != "n"
+    }
+
+    // Conventional commit workflow implementation
+    let commit = func() {
+        styled.header("📝 Conventional Commit Builder")
+        styled.info("─────────────────────────────")
+
+        // Allowed commit types
+        let allowedTypes = ["feat", "fix", "docs", "style", "refactor", "perf", "test", "chore", "revert"]
+
+        // Prompt for commit type until valid input is provided
+        let commitType = func() {
+            while (true) {
+                let t = input("🔧 Type", "feat, fix, docs, style, refactor, perf, test, chore, revert: ")
+                if (t in allowedTypes) {
+                    styled.success("✅ Valid type: " + t)
+                    return t
+                }
+                styled.error("⚠️  Invalid type: " + t)
+            }
+        }()
+
+        // Optional scope
+        let scope = input("🎯 Scope (optional)", "e.g., authentication: ")
+
+        // Required description – re-prompt if empty
+        let description = func() {
+            while (true) {
+                let d = input("📌 Description", "")
+                if (d != "") {
+                    return d
+                }
+                styled.error("⚠️  This field is required")
+            }
+        }()
+
+        // Breaking change section (optional)
+        let isBreaking = false
+        let breakingDetail = if (confirmAction("💥 Breaking change?")) {
+            isBreaking = true
+            input("📣 Breaking change details", "")
+        } else {
+            ""
+        }
+
+        // Issue reference (optional)
+        let issueInput = input("🔗 Issue number (optional)", "e.g., 123")
+        let issueRef;
+        if(issueInput != "") {
+            issueRef = "Closes #" + issueInput
+        } else {
+            issueRef = ""
+        }
+
+        
+
+        // Build commit header and message
+        let header = scope != "" ?
+            commitType + "(" + scope + "): " + description :
+            commitType + ": " + description
+
+        let commitMessage = header
+        if (body != "") {
+            commitMessage = commitMessage + "\n\n" + body
+        }
+        if (isBreaking) {
+            commitMessage = commitMessage + "\n\nBREAKING CHANGE: " + breakingDetail
+        }
+        if (issueRef != "") {
+            commitMessage = commitMessage + "\n\n" + issueRef
+        }
+        if (trailers.length > 0) {
+            commitMessage = commitMessage + "\n\n" + trailers.join("\n")
+        }
+
+        // Display commit preview
+        styled.highlight("\n✨ Commit Preview:")
+        styled.dim("──────────────────")
+        println(commitMessage)
+        styled.dim("──────────────────")
+
+        // Confirm commit action
+        if (!confirmAction("Commit with this message?")) {
+            styled.error("🚫 Commit canceled")
+            os.exit(0)
+        }
+
+        // Execute Git workflow
+        os.run("git add .")
+        os.run("git commit -m '" + commitMessage + "'")
+        os.run("git push")
+
+        styled.success("✅ Successfully committed and pushed!")
+    }
+
+    // Fallback when no action is provided
     let defaultOutput = func(){
-        println('No arguments provided.')
-        println('Usage: commit')
+        println("No arguments provided.")
+        println("Usage: commit")
         os.exit(1)
     }
 }

@@ -11,10 +11,13 @@ if (args_len == 0) {
 } else if (args_len == 1) {
     switch(args[0]){
         case 'help' {
-            println('Usage: vint <path-to-v-file>')
+            println('Usage: commit ')
         }
         case 'version' {
-            println('vint version 1.0.0')
+            println('version 1.0.0')
+        }
+        case "commit"{
+            actions.commit()
         }
         default {
             actions.defaultOutput()
