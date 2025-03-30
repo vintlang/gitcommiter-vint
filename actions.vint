@@ -3,7 +3,6 @@ import styled
 
 package actions {
 
-
     // Helper: confirmation prompt (Y/n)
     let confirmAction = func(question) {
         let ans = prompt(question, "Y/n")
@@ -25,50 +24,57 @@ package actions {
                 if (t in allowedTypes) {
                     styled.success("✅ Valid type: " + t)
                     return t
+                } else {
+                    styled.error("⚠️  Invalid type: " + t)
                 }
-                styled.error("⚠️  Invalid type: " + t)
             }
         }()
 
-        // Optional scope
-        let scope = input("🎯 Scope (optional)", "e.g., authentication: ")
+        // Optional scope input
+        let scope = input("🎯 Scope (optional) e.g authentication: ")
 
         // Required description – re-prompt if empty
         let description = func() {
             while (true) {
-                let d = input("📌 Description", "")
+                let d = input("📌 Description ")
                 if (d != "") {
                     return d
+                } else {
+                    styled.error("⚠️  This field is required")
                 }
-                styled.error("⚠️  This field is required")
             }
         }()
 
-        // Breaking change section (optional)
+        // Optional commit body
+        let body = input("💬 Body (optional)"+ "Enter commit body (press Enter for none): ")
+
+        // Breaking change section (optional) using a normal if statement
         let isBreaking = false
-        let breakingDetail = if (confirmAction("💥 Breaking change?")) {
+        let breakingDetail = ""
+        if (confirmAction("💥 Breaking change?")) {
             isBreaking = true
-            input("📣 Breaking change details", "")
-        } else {
-            ""
+            breakingDetail = input("📣 Breaking change details ")
         }
 
-        // Issue reference (optional)
-        let issueInput = input("🔗 Issue number (optional)", "e.g., 123")
-        let issueRef;
-        if(issueInput != "") {
+        // Issue reference (optional) using a normal if statement
+        let issueInput = input("🔗 Issue number (optional)  e.g., 123")
+        let issueRef = ""
+        if (issueInput != "") {
             issueRef = "Closes #" + issueInput
-        } else {
-            issueRef = ""
         }
 
-        
+        // Trailers – for now, we use an empty list (could be extended with input loops)
+        let trailers = []
 
-        // Build commit header and message
-        let header = scope != "" ?
-            commitType + "(" + scope + "): " + description :
-            commitType + ": " + description
+        // Build commit header using a normal if statement
+        let header = ""
+        if (scope != "") {
+            header = commitType + "(" + scope + "): " + description
+        } else {
+            header = commitType + ": " + description
+        }
 
+        // Build the full commit message
         let commitMessage = header
         if (body != "") {
             commitMessage = commitMessage + "\n\n" + body
